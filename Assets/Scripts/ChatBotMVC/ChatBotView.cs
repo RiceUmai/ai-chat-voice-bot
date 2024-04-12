@@ -11,6 +11,14 @@ public class ChatBotView
     public string ChatGPTAPIKey => chatGPTAPIKey;
 
     [SerializeField]
+    private StyleBertVITS2APIManager styleBertVITS2APIManager;
+    public StyleBertVITS2APIManager StyleBertVITS2APIManager => styleBertVITS2APIManager;
+
+    [SerializeField]
+    private AudioManager audioManager;
+    public AudioManager AudioManager => audioManager;
+
+    [SerializeField]
     private TMP_Text responseMessageText;
     public TMP_Text ResponseMessageText => responseMessageText;
 

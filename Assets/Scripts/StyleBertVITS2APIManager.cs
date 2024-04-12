@@ -6,12 +6,10 @@ using UnityEngine.Networking;
 
 public class StyleBertVITS2APIManager : MonoBehaviour
 {
+    [SerializeField]
     private string baseUrl = "http://127.0.0.1:5000/";
 
-    [SerializeField]
-    private AudioSource audioSource;
-
-    public async UniTask<byte[]> SendVoiceRequest(TTSParameters parameters)
+    public async UniTask<AudioClip> SendVoiceRequest(TTSParameters parameters)
     {
         var url = $"{baseUrl}voice?{ToQueryString(parameters)}";
         using var request = UnityWebRequest.Get(url);
@@ -26,14 +24,11 @@ public class StyleBertVITS2APIManager : MonoBehaviour
         else
         {
             Debug.Log($"Successed");
-            return request.downloadHandler.data;
 
-            //byte[] audioData = request.downloadHandler.data;
-            //var audioClip = WavUtility.ToAudioClip(audioData); 
-            //PlayAudioClip(audioClip);
+            byte[] audioData = request.downloadHandler.data;
+            return WavUtility.ToAudioClip(audioData);
         }
     }
-
 
 
     private string ToQueryString(TTSParameters parameters)

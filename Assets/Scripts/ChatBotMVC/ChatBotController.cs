@@ -18,14 +18,6 @@ public class ChatBotController : MonoBehaviour
 
     private void BindView()
     {
-        view.MessageInputField
-            .onValueChanged
-            .AsObservable()
-            .Subscribe(text =>
-            {
-                
-            }).AddTo(this);
-
         view.SendMessageBtn
             .OnClickAsObservable()
             .AsObservable()
@@ -45,6 +37,10 @@ public class ChatBotController : MonoBehaviour
             ChatGPTResponseModel response = await model.ChatGPTConnection.RequestAsync(view.MessageInputField.text);
             string responseMessage = response.choices[0].message.content;
             view.ResponseMessageText.text = responseMessage;
+
+            TTSParameters ttsParameters = new TTSParameters(responseMessage);
+            AudioClip AudioClip = await view.StyleBertVITS2APIManager.SendVoiceRequest(ttsParameters);
+            view.AudioManager.PlayAudioClip(AudioClip);
         }
         catch (Exception e) 
         {

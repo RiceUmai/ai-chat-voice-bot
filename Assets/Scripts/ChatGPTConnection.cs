@@ -16,8 +16,8 @@ namespace AAA.OpenAI
         public ChatGPTConnection(string apiKey)
         {
             _apiKey = apiKey;
-            _messageList.Add(
-                new ChatGPTMessageModel() { role = "system", content = "語尾に「にゃ」をつけて" });
+            //_messageList.Add(
+            //    new ChatGPTMessageModel() { role = "system", content = "語尾に「にゃ」をつけて" });
         }
 
         public async UniTask<ChatGPTResponseModel> RequestAsync(string userMessage)
