@@ -1,5 +1,12 @@
 {
   "dependencies": {
+    "com.accky.unibudoux": {
+      "version": "https://github.com/Accky/UniBudouX.git?path=Assets/Scripts",
+      "depth": 0,
+      "source": "git",
+      "dependencies": {},
+      "hash": "0c54aee91cad7ad69ad40037266c0c303b3e2763"
+    },
     "com.unity.2d.sprite": {
       "version": "1.0.0",
       "depth": 0,
