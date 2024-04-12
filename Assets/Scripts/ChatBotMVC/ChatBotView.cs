@@ -7,8 +7,8 @@ using UnityEngine.UI;
 public class ChatBotView
 {
     [SerializeField]
-    private string chatGPTAPIKey;
-    public string ChatGPTAPIKey => chatGPTAPIKey;
+    private OpenAPIKey openAPIKey;
+    public OpenAPIKey OpenAPIKey => openAPIKey;
 
     [SerializeField]
     private StyleBertVITS2APIManager styleBertVITS2APIManager;

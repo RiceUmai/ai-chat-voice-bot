@@ -3,6 +3,9 @@ using Cysharp.Threading.Tasks;
 using System;
 using UniRx;
 using UnityEngine;
+using UniBudouX;
+using System.Collections.Generic;
+using System.Threading;
 
 public class ChatBotController : MonoBehaviour
 {
@@ -12,7 +15,7 @@ public class ChatBotController : MonoBehaviour
 
     private void Awake()
     {
-        model.ChatGPTConnection = new ChatGPTConnection(view.ChatGPTAPIKey);
+        model.ChatGPTConnection = new ChatGPTConnection(view.OpenAPIKey.APIKey);
         BindView();
     }
 
@@ -36,19 +39,65 @@ public class ChatBotController : MonoBehaviour
 
             ChatGPTResponseModel response = await model.ChatGPTConnection.RequestAsync(view.MessageInputField.text);
             string responseMessage = response.choices[0].message.content;
-            view.ResponseMessageText.text = responseMessage;
+            List<string> segmentedTexts = Parser.Parse(responseMessage);
+            List<string> segmentedTexts100Char = SegmentTextInto100Char(segmentedTexts);
 
-            TTSParameters ttsParameters = new TTSParameters(responseMessage);
-            AudioClip AudioClip = await view.StyleBertVITS2APIManager.SendVoiceRequest(ttsParameters);
-            view.AudioManager.PlayAudioClip(AudioClip);
+            view.ResponseMessageText.text = string.Empty;
+
+            foreach (string text in segmentedTexts100Char)
+            {
+                view.ResponseMessageText.text += $"{text}" + Environment.NewLine;
+            }
+
+            List<AudioClip> audioClipList = await view.StyleBertVITS2APIManager.SendVoiceRequest(segmentedTexts100Char);
+
+            await view.AudioManager.PlayAudioClip(audioClipList, model.Cts.Token);
         }
-        catch (Exception e) 
+        catch (Exception e)
         {
-            Debug.Log(e.Message);
+            Debug.LogError(e.Message);
         }
         finally
         {
-            view.SendMessageBtn.interactable = true;
+            if (view.SendMessageBtn != null)
+            {
+                view.SendMessageBtn.interactable = true;
+            }
+        }
+    }
+
+    private List<string> SegmentTextInto100Char(List<string> phrases)
+    {
+        List<string> segmentedTexts = new List<string>();
+        string currentText = "";
+
+        foreach (var phrase in phrases)
+        {
+            if ((currentText.Length + phrase.Length) <= 100)
+            {
+                currentText += phrase;
+            }
+            else
+            {
+                segmentedTexts.Add(currentText);
+                currentText = phrase;
+            }
+        }
+
+        if (!string.IsNullOrEmpty(currentText))
+        {
+            segmentedTexts.Add(currentText);
+        }
+
+        return segmentedTexts;
+    }
+
+    private void OnDestroy()
+    {
+        if (model.Cts != null)
+        {
+            model.Cts.Cancel();
+            model.Cts.Dispose();
         }
     }
 }

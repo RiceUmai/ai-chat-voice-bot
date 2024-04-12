@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.Text;
 using Cysharp.Threading.Tasks;
 using UnityEngine;
@@ -9,8 +10,22 @@ public class StyleBertVITS2APIManager : MonoBehaviour
     [SerializeField]
     private string baseUrl = "http://127.0.0.1:5000/";
 
-    public async UniTask<AudioClip> SendVoiceRequest(TTSParameters parameters)
+    public async UniTask<List<AudioClip>> SendVoiceRequest(List<string> textList)
     {
+        List<AudioClip> audioClipList = new List<AudioClip>();
+
+        foreach (var text in textList)
+        {
+            audioClipList.Add(await SendVoiceRequest(text));
+        }
+
+        return audioClipList;
+    }
+
+    public async UniTask<AudioClip> SendVoiceRequest(string text)
+    {
+        TTSParameters parameters = new TTSParameters(text);
+
         var url = $"{baseUrl}voice?{ToQueryString(parameters)}";
         using var request = UnityWebRequest.Get(url);
         request.SetRequestHeader("Accept", "audio/wav");
