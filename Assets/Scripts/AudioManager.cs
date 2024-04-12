@@ -18,13 +18,19 @@ public class AudioManager : MonoBehaviour
     {
         foreach (AudioClip clip in clipList)
         {
-            if(ct.IsCancellationRequested)
-            {
-                break;
-            }
-
             PlayAudioClip(clip);
             await UniTask.WaitForSeconds(clip.length, cancellationToken : ct);
+
+            if (ct.IsCancellationRequested)
+            {
+                StopAudioClip();
+                break;
+            }
         }
+    }
+
+    private void StopAudioClip()
+    {
+        audioSource.Stop();
     }
 }

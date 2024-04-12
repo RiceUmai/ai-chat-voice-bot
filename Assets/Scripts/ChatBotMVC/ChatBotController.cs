@@ -6,6 +6,7 @@ using UnityEngine;
 using UniBudouX;
 using System.Collections.Generic;
 using System.Threading;
+using DG.Tweening;
 
 public class ChatBotController : MonoBehaviour
 {
@@ -43,14 +44,11 @@ public class ChatBotController : MonoBehaviour
             List<string> segmentedTexts100Char = SegmentTextInto100Char(segmentedTexts);
 
             view.ResponseMessageText.text = string.Empty;
+            string currentText = string.Join(Environment.NewLine, segmentedTexts100Char);
 
-            foreach (string text in segmentedTexts100Char)
-            {
-                view.ResponseMessageText.text += $"{text}" + Environment.NewLine;
-            }
+            view.ResponseMessageText.DOText(currentText, currentText.Length * 0.1f).SetEase(Ease.Linear);
 
             List<AudioClip> audioClipList = await view.StyleBertVITS2APIManager.SendVoiceRequest(segmentedTexts100Char);
-
             await view.AudioManager.PlayAudioClip(audioClipList, model.Cts.Token);
         }
         catch (Exception e)
