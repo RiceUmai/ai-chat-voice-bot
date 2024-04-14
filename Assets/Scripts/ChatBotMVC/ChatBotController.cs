@@ -30,6 +30,15 @@ public class ChatBotController : MonoBehaviour
             {
                 OnSendMessageToChatGPTEvent().Forget();
             }).AddTo(this);
+
+        view.OpenLicenseBtn
+            .OnClickAsObservable()
+            .AsObservable()
+            .ThrottleFirst(TimeSpan.FromMilliseconds(2000))
+            .Subscribe(_ =>
+            {
+                OnOpenLicenseButton();
+            }).AddTo(this);
     }
 
     private async UniTask OnSendMessageToChatGPTEvent()
@@ -88,6 +97,11 @@ public class ChatBotController : MonoBehaviour
         }
 
         return segmentedTexts;
+    }
+
+    private void OnOpenLicenseButton()
+    {
+        Application.OpenURL("https://tyc.rei-yumesaki.net/about/project/");
     }
 
     private void OnDestroy()

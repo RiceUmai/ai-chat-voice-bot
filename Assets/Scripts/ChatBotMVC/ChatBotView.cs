@@ -29,4 +29,8 @@ public class ChatBotView
     [SerializeField]
     private Button sendMessageBtn;
     public Button SendMessageBtn => sendMessageBtn;
+
+    [SerializeField]
+    private Button openLicenseBtn;
+    public Button OpenLicenseBtn => openLicenseBtn;
 }
